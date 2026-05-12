@@ -16,7 +16,7 @@ export const MENU_ITEMS = [
     description: 'Vui vẻ và thư giãn',
     color: 'from-blue-400 to-blue-600 via-blue-500',
     gradient: 'bg-gradient-to-br from-blue-500 to-blue-700',
-    image: '/baichoigame/game-logo.png',
+    image: '/baichoigame/images/game-logo.png',
     path: '/game',
     external: false,
   },
