@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const MenuCard = ({ icon, title, description, color, gradient, delay = 0, path = '#', external = false }) => {
+export const MenuCard = ({ icon, title, description, color, gradient, delay = 0, path = '#', external = false, image }) => {
   const playClickSound = () => {
     try {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -64,8 +64,11 @@ export const MenuCard = ({ icon, title, description, color, gradient, delay = 0,
         }}
       />
 
-      {/* Background gradient */}
-      <div className={`absolute inset-0 ${gradient} opacity-90 group-hover:opacity-100 transition-opacity duration-300`} />
+      {/* Background gradient or image */}
+      <div 
+        className={`absolute inset-0 ${!image ? gradient : ''} opacity-90 group-hover:opacity-100 transition-opacity duration-300`}
+        style={image ? { backgroundImage: `url('${image}')`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+      />
 
       {/* Shine effect */}
       <motion.div

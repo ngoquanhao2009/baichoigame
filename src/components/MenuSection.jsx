@@ -30,6 +30,7 @@ export const MenuSection = () => {
               delay={idx * 0.15}
               path={item.path}
               external={item.external}
+              image={item.image}
             />
           ))}
         </motion.div>
