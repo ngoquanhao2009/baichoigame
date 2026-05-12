@@ -9,6 +9,7 @@ import './App.css';
 
 function App() {
   const [showWelcome, setShowWelcome] = useState(true);
+  const [userName, setUserName] = useState('Bài Chòi');
 
   // Play sound effect on load
   useEffect(() => {

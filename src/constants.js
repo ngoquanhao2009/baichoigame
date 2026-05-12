@@ -6,7 +6,8 @@ export const MENU_ITEMS = [
     description: 'Nâng cao kỹ năng',
     color: 'from-orange-400 to-orange-600 via-orange-500',
     gradient: 'bg-gradient-to-br from-orange-400 to-orange-600',
-    path: '/learn',
+    path: 'https://ngoquanhao2009.github.io/Stylesuggestionsforbichi/',
+    external: true,
   },
   {
     id: 'game',
@@ -16,6 +17,7 @@ export const MENU_ITEMS = [
     color: 'from-blue-400 to-blue-600 via-blue-500',
     gradient: 'bg-gradient-to-br from-blue-500 to-blue-700',
     path: '/game',
+    external: false,
   },
   {
     id: 'shop',
@@ -25,6 +27,7 @@ export const MENU_ITEMS = [
     color: 'from-pink-400 to-red-600 via-pink-500',
     gradient: 'bg-gradient-to-br from-pink-500 to-red-600',
     path: '/shop',
+    external: false,
   },
 ];
 

@@ -1,6 +1,6 @@
 # 🚀 Development Guide
 
-Hướng dẫn phát triển cho dự án Bái Chọi Game Menu.
+Hướng dẫn phát triển cho dự án Bài Chòi Menu.
 
 ## 📋 Prerequisites
 

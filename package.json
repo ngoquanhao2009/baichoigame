@@ -1,8 +1,9 @@
 {
   "name": "baichoi-game",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
+  "description": "Bài Chòi - Game menu interface",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

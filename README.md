@@ -1,4 +1,4 @@
-# 🎮 Bái Chọi Game - Menu Interface
+# 🎮 Bài Chòi - Menu Interface
 
 Giao diện game menu Interactive học tập vui nhộn, hiện đại và bóng bẩy cho web/mobile.
 
@@ -81,7 +81,8 @@ export const MENU_ITEMS = [
     description: 'Nâng cao kỹ năng',
     color: 'from-orange-400 to-orange-600 via-orange-500',
     gradient: 'bg-gradient-to-br from-orange-400 to-orange-600',
-    path: '/learn',
+    path: 'https://ngoquanhao2009.github.io/Stylesuggestionsforbichi/',
+    external: true,
   },
   // Add more items...
 ];

@@ -1,6 +1,6 @@
 # 🚀 Quick Start Guide
 
-Hướng dẫn nhanh để chạy Bái Chọi Game ngay lập tức!
+Hướng dẫn nhanh để chạy Bài Chòi ngay lập tức!
 
 ## ⚡ 30 Second Setup
 

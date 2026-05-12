@@ -28,6 +28,8 @@ export const MenuSection = () => {
               color={item.color}
               gradient={item.gradient}
               delay={idx * 0.15}
+              path={item.path}
+              external={item.external}
             />
           ))}
         </motion.div>

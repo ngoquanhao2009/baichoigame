@@ -1,6 +1,11 @@
 # ✨ Features
 
-Danh sách các tính năng của Bái Chọi Game Menu.
+Danh sách các tính năng của Bài Chòi Menu.
+
+## 🔗 Navigation Status
+- ✅ **Học Tập** - Active: https://ngoquanhao2009.github.io/Stylesuggestionsforbichi/
+- 🔲 **Trò Chơi** - Coming soon
+- 🔲 **Cửa Hàng** - Coming soon
 
 ## 🎯 Core Features
 

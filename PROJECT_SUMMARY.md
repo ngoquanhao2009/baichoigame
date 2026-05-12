@@ -1,6 +1,8 @@
-# 🎮 Bái Chọi Game - Project Summary
+# 🎮 Bài Chòi - Project Summary
 
-Tóm tắt dự án Bái Chọi Game Menu Interface - Giao diện game học tập vui nhộn, hiện đại và bóng bẩy.
+Tóm tắt dự án Bài Chòi Menu Interface - Giao diện game học tập vui nhộn, hiện đại và bóng bẩy.
+
+**Status**: Học Tập - Link tới: https://ngoquanhao2009.github.io/Stylesuggestionsforbichi/ | Trò Chơi - Chưa hoàn thiện | Cửa Hàng - Chưa hoàn thiện
 
 ## ✅ Hoàn Thành
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const MenuCard = ({ icon, title, description, color, gradient, delay = 0 }) => {
+export const MenuCard = ({ icon, title, description, color, gradient, delay = 0, path = '#', external = false }) => {
   const playClickSound = () => {
     try {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -28,6 +28,18 @@ export const MenuCard = ({ icon, title, description, color, gradient, delay = 0 
     }
   };
 
+  const handleClick = () => {
+    playClickSound();
+    if (path && path !== '#') {
+      if (external) {
+        window.open(path, '_blank');
+      } else {
+        // For internal routes, can implement routing here
+        window.location.href = path;
+      }
+    }
+  };
+
   return (
     <motion.button
       className={`relative h-40 md:h-56 rounded-3xl overflow-hidden cursor-pointer transform transition-all group`}
@@ -36,8 +48,8 @@ export const MenuCard = ({ icon, title, description, color, gradient, delay = 0 
       transition={{ duration: 0.6, delay }}
       whileHover={{ y: -10, scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      onClick={playClickSound}
-      onTap={playClickSound}
+      onClick={handleClick}
+      onTap={handleClick}
     >
       {/* 3D shadow effect */}
       <motion.div
