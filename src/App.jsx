@@ -66,7 +66,7 @@ function App() {
       {/* Welcome Toast */}
       {showWelcome && (
         <Toast
-          message="Chào mừng đến với Bái Chọi!"
+          message="Chào mừng đến với Bài Chòi!"
           icon="👋"
           duration={3000}
           onClose={() => setShowWelcome(false)}
