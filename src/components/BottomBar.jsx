@@ -1,31 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useSound } from '../hooks/useSound';
 
 export const BottomBar = () => {
-  const playHoverSound = () => {
-    try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const now = audioContext.currentTime;
-      
-      const osc = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-      
-      osc.connect(gain);
-      gain.connect(audioContext.destination);
-      
-      osc.frequency.setValueAtTime(550, now);
-      osc.frequency.exponentialRampToValueAtTime(650, now + 0.1);
-      osc.type = 'sine';
-      
-      gain.gain.setValueAtTime(0.15, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-      
-      osc.start(now);
-      osc.stop(now + 0.12);
-    } catch (e) {
-      // Silently fail
-    }
-  };
+  const { playHoverSound } = useSound();
 
   return (
     <motion.div
@@ -37,10 +15,7 @@ export const BottomBar = () => {
       {/* Glassmorphism background */}
       <motion.div 
         className="absolute inset-0 bg-gradient-to-t from-white/15 via-white/10 to-white/15 backdrop-blur-xl border-t border-white/30 rounded-t-3xl"
-        animate={{
-          opacity: [0.8, 0.9, 0.8],
-        }}
-        transition={{ duration: 3, repeat: Infinity }}
+        animate={{ opacity: 0.9 }}
       />
 
       <div className="relative max-w-7xl mx-auto flex items-center justify-between">

@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Background } from './components/Background';
 import { TopBar } from './components/TopBar';
 import { MenuSection } from './components/MenuSection';
 import { BottomBar } from './components/BottomBar';
 import { AudioToggle } from './components/AudioToggle';
 import { Toast } from './components/Notifications';
+import { GameLobby } from './components/GameLobby';
+import { GameProvider } from './store/gameStore';
+import LobbyPage from './pages/LobbyPage';
+import RoomPage from './pages/RoomPage';
+import GameplayPage from './pages/GameplayPage';
+import ResultPage from './pages/ResultPage';
 import './App.css';
 
-function App() {
+function MainMenu() {
   const [showWelcome, setShowWelcome] = useState(true);
-  const [userName, setUserName] = useState('Bài Chòi');
 
-  // Play sound effect on load
   useEffect(() => {
     const playStartSound = async () => {
       try {
-        // Create a simple beep sound using Web Audio API
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
         const gain = audioContext.createGain();
@@ -38,7 +42,6 @@ function App() {
 
     playStartSound();
     
-    // Show welcome message
     const timer = setTimeout(() => {
       setShowWelcome(false);
     }, 3000);
@@ -48,22 +51,12 @@ function App() {
 
   return (
     <div className="w-full h-screen bg-gray-900 overflow-hidden">
-      {/* Background */}
       <Background />
-
-      {/* Top Bar */}
       <TopBar />
-
-      {/* Menu Section */}
       <MenuSection />
-
-      {/* Bottom Bar */}
       <BottomBar />
-
-      {/* Audio Toggle */}
       <AudioToggle />
 
-      {/* Welcome Toast */}
       {showWelcome && (
         <Toast
           message="Chào mừng đến với Bài Chòi!"
@@ -73,9 +66,25 @@ function App() {
         />
       )}
 
-      {/* Click sound interaction */}
       <div className="absolute inset-0 pointer-events-none" />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <GameProvider>
+      <Router basename="/baichoigame/">
+        <Routes>
+          <Route path="/" element={<MainMenu />} />
+          <Route path="/game" element={<LobbyPage />} />
+          <Route path="/game/lobby" element={<LobbyPage />} />
+          <Route path="/game/room/:id" element={<RoomPage />} />
+          <Route path="/game/play/:id" element={<GameplayPage />} />
+          <Route path="/game/result" element={<ResultPage />} />
+        </Routes>
+      </Router>
+    </GameProvider>
   );
 }
 

@@ -1,47 +1,33 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useSound } from '../hooks/useSound';
 
 export const TopBar = () => {
-  const playHoverSound = () => {
-    try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const now = audioContext.currentTime;
-      
-      const osc = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-      
-      osc.connect(gain);
-      gain.connect(audioContext.destination);
-      
-      osc.frequency.setValueAtTime(650, now);
-      osc.frequency.exponentialRampToValueAtTime(700, now + 0.08);
-      osc.type = 'sine';
-      
-      gain.gain.setValueAtTime(0.15, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-      
-      osc.start(now);
-      osc.stop(now + 0.1);
-    } catch (e) {
-      // Silently fail
-    }
-  };
+  const { playHoverSound } = useSound();
 
   return (
     <motion.div
-      className="fixed top-0 left-0 right-0 z-40 px-4 py-3 md:px-6 md:py-4"
+      className="fixed top-0 left-0 right-0 z-40 px-4 py-3 md:px-6 md:py-4 overflow-hidden"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      {/* Glassmorphism background */}
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-r from-white/15 via-white/10 to-white/15 backdrop-blur-xl border-b border-white/30 rounded-b-3xl"
-        animate={{
-          opacity: [0.8, 0.9, 0.8],
-        }}
-        transition={{ duration: 3, repeat: Infinity }}
+      {/* Premium glassmorphism shell */}
+      <motion.div
+        className="absolute inset-0 rounded-b-3xl bg-white/6 backdrop-blur-3xl border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.25)]"
+        style={{ borderColor: 'rgba(255,255,255,0.08)' }}
+        animate={{ opacity: 0.98 }}
       />
+
+      {/* Soft reflected light sweep */}
+      <motion.div
+        className="absolute -top-8 -left-1/3 h-24 w-2/3 rounded-full bg-gradient-to-r from-white/0 via-white/35 to-white/0 blur-xl pointer-events-none"
+        animate={{ x: ['-30%', '140%'] }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      {/* Inner sheen for frosted-glass depth */}
+      <div className="absolute inset-x-6 top-1 h-px bg-white/50 rounded-full pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto flex items-center justify-between">
         {/* Left section - Avatar and Level */}
@@ -90,8 +76,8 @@ export const TopBar = () => {
           >
             <motion.span 
               className="text-xl md:text-2xl"
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
+              animate={{ rotate: [0, 8, -8, 0] }}
+              transition={{ duration: 3, repeat: Infinity }}
             >
               💰
             </motion.span>
