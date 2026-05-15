@@ -39,6 +39,27 @@ export const WaitingRoom = ({ roomId }) => {
     return () => timers.forEach(t => clearTimeout(t));
   }, [room, updateRoom]);
 
+  // Dev/testing: auto-mark all participants ready and start when ?autoStart=1
+  useEffect(() => {
+    if (!room) return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.get('autoStart')) return;
+
+      // ensure at least 2 participants
+      const parts = room.participants ? [...room.participants] : [];
+      while (parts.length < 2) {
+        parts.push({ id: `ai-${Math.random().toString(36).slice(2,6)}`, name: 'AI', ready: false, isOwner: false });
+      }
+
+      // set all to ready after a short delay to allow UI to render
+      setTimeout(() => {
+        const readyParts = parts.map(p => ({ ...p, ready: true }));
+        updateRoom(room.id, { participants: readyParts, players: readyParts.length });
+      }, 900);
+    } catch (e) {}
+  }, [room, updateRoom]);
+
   const toggleReady = () => {
     if (!room) return;
     const parts = room.participants.map(p => p.id === playerId ? { ...p, ready: !p.ready } : p);
