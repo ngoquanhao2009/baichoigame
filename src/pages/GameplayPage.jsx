@@ -61,6 +61,16 @@ export const GameplayPage = () => {
     setWinner(null);
   }, [id]);
 
+  // dealing state for animation
+  const [dealing, setDealing] = useState(false);
+  useEffect(() => {
+    if (hands && hands.length) {
+      setDealing(true);
+      const t = setTimeout(() => setDealing(false), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [hands]);
+
   useEffect(() => {
     startHostLoop();
     return () => stopHostLoop();
@@ -223,8 +233,8 @@ export const GameplayPage = () => {
                 <div className="mb-4">
                   <h4 className="text-sm text-white/80 mb-2">Bộ bài của bạn</h4>
                   <div className="flex gap-3 overflow-x-auto py-2">
-                    {hands[0] && hands[0].map(c => (
-                      <BaiCard key={c.id} card={c} onClick={() => playCard(c.id)} />
+                    {hands[0] && hands[0].map((c, idx) => (
+                      <BaiCard key={c.id} card={c} onClick={() => playCard(c.id)} dealDelay={dealing ? idx * 0.08 : 0} />
                     ))}
                   </div>
                 </div>

@@ -1,9 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export const BaiCard = ({ card, onClick, disabled }) => {
+export const BaiCard = ({ card, onClick, disabled, dealDelay = 0 }) => {
   return (
     <motion.button
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ delay: dealDelay, type: 'spring', stiffness: 300 }}
       whileHover={{ y: -8, scale: 1.02 }}
       whileTap={{ scale: 0.96 }}
       onClick={() => !disabled && onClick && onClick(card.id ? card.id : card)}

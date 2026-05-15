@@ -1,9 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { useGameStore } from '../store/gameStore';
 
 export const JoinRoomPanel = ({ onClose, onJoin }) => {
   const [roomCode, setRoomCode] = useState('');
   const [error, setError] = useState('');
+  const { state } = useGameStore();
+  const rooms = state.rooms || [];
+
+  const suggestions = useMemo(() => {
+    const q = roomCode.trim().toLowerCase();
+    if (!q) return rooms.slice(0,5);
+    return rooms.filter(r => r.id.toLowerCase().includes(q) || (r.name && r.name.toLowerCase().includes(q))).slice(0,5);
+  }, [roomCode, rooms]);
 
   const handlePadClick = (digit) => {
     if (roomCode.length < 12) {
@@ -39,7 +48,7 @@ export const JoinRoomPanel = ({ onClose, onJoin }) => {
       exit={{ opacity: 0 }}
       onClick={onClose}
     >
-      <motion.div
+        <motion.div
         className="bg-gray-900 rounded-3xl p-8 border border-white/20 max-w-md w-full mx-4"
         initial={{ scale: 0.8, y: 20 }}
         animate={{ scale: 1, y: 0 }}
@@ -110,6 +119,22 @@ export const JoinRoomPanel = ({ onClose, onJoin }) => {
           >
             Tham Gia
           </motion.button>
+        </div>
+
+        <div className="mt-6">
+          <h3 className="text-white font-semibold mb-2">Gợi ý phòng</h3>
+          <div className="space-y-2 max-h-40 overflow-y-auto">
+            {suggestions.length === 0 && <div className="text-white/60 text-sm">Không có gợi ý</div>}
+            {suggestions.map(r => (
+              <div key={r.id} className="flex items-center justify-between bg-gray-800 p-2 rounded">
+                <div>
+                  <div className="text-sm text-white font-semibold">{r.name}</div>
+                  <div className="text-xs text-white/60">{r.id} • {r.players}/{r.maxPlayers}</div>
+                </div>
+                <motion.button onClick={() => { if (onJoin) onJoin(r.id); onClose(); }} className="px-3 py-1 rounded bg-green-500 text-white text-sm">Tham gia</motion.button>
+              </div>
+            ))}
+          </div>
         </div>
       </motion.div>
     </motion.div>

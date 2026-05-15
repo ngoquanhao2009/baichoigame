@@ -48,7 +48,18 @@ export const GameLobby = () => {
   };
 
   const handleJoinRoom = (roomId) => {
-    const room = rooms.find(r => r.id === roomId);
+    if (!roomId) return;
+    const code = String(roomId).trim();
+    // try exact match first
+    let room = rooms.find(r => r.id === code);
+    // try with prefix
+    if (!room && !code.startsWith('BAICHOI-')) {
+      room = rooms.find(r => r.id === `BAICHOI-${code}` || r.id.includes(code));
+    }
+    // try contains match
+    if (!room) {
+      room = rooms.find(r => r.id.includes(code) || (r.name && r.name.toLowerCase().includes(code.toLowerCase())));
+    }
     if (room && room.status !== 'full') {
       // If already present, just navigate
       const already = (room.participants||[]).some(p => p.id === player.id);
@@ -64,6 +75,9 @@ export const GameLobby = () => {
       }
       setActiveMode(null);
       navigate(`/game/room/${roomId}`);
+    }
+    else {
+      alert('Không tìm thấy phòng hợp lệ hoặc phòng đã đầy. Vui lòng kiểm tra mã phòng.');
     }
   };
 
