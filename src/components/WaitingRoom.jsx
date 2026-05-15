@@ -17,7 +17,7 @@ export const WaitingRoom = ({ roomId }) => {
       const ownerId = playerId || `p-${Math.random().toString(36).slice(2,8)}`;
       updateRoom(room.id, { participants: [{ id: ownerId, name: room.owner, ready: false, isOwner: true }] });
     }
-  }, [room, updateRoom, localId]);
+  }, [room, updateRoom, playerId]);
 
   // Fake other players join over time to make it feel alive
   useEffect(() => {
