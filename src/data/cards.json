@@ -1,0 +1,14 @@
+[
+  {"id":"ong_am","name":"Ông Ầm","rarity":"common","image":"/cards/ong_am.webp","voice":"/audio/ong_am.mp3"},
+  {"id":"tam_bich","name":"Tám Bích","rarity":"common","image":"/cards/tam_bich.webp","voice":"/audio/tam_bich.mp3"},
+  {"id":"ba_ga","name":"Ba Gà","rarity":"common","image":"/cards/ba_ga.webp","voice":"/audio/ba_ga.mp3"},
+  {"id":"nhut_noc","name":"Nhứt Nọc","rarity":"common","image":"/cards/nhut_noc.webp","voice":"/audio/nhut_noc.mp3"},
+  {"id":"tu_cang","name":"Tứ Cẳng","rarity":"common","image":"/cards/tu_cang.webp","voice":"/audio/tu_cang.mp3"},
+  {"id":"nam_le","name":"Năm Lẻ","rarity":"common","image":"/cards/nam_le.webp","voice":"/audio/nam_le.mp3"},
+  {"id":"sau_doi","name":"Sáu Đôi","rarity":"common","image":"/cards/sau_doi.webp","voice":"/audio/sau_doi.mp3"},
+  {"id":"bay_vui","name":"Bảy Vui","rarity":"common","image":"/cards/bay_vui.webp","voice":"/audio/bay_vui.mp3"},
+  {"id":"bach_hue","name":"Bạch Huê","rarity":"uncommon","image":"/cards/bach_hue.webp","voice":"/audio/bach_hue.mp3"},
+  {"id":"sau_hot","name":"Sáu Hột","rarity":"uncommon","image":"/cards/sau_hot.webp","voice":"/audio/sau_hot.mp3"},
+  {"id":"chin_cu","name":"Chín Cu","rarity":"uncommon","image":"/cards/chin_cu.webp","voice":"/audio/chin_cu.mp3"},
+  {"id":"bi_do","name":"Bí Đỏ","rarity":"rare","image":"/cards/bi_do.webp","voice":"/audio/bi_do.mp3"}
+]

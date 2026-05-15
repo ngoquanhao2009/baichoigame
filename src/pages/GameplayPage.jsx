@@ -23,13 +23,16 @@ const PHRASES = [
   'Bảy Vui',
 ];
 
-const makeDeck = () => {
-  // create multiple copies of each phrase to form a deck
+import RNGManager from '../managers/RNGManager';
+import AIManager from '../managers/AIManager';
+
+const makeDeck = (seed = null) => {
   const deck = [];
   PHRASES.forEach((p) => {
     for (let i = 0; i < 6; i++) deck.push({ id: `${p}-${i}-${Math.random().toString(36).slice(2,6)}`, v: p });
   });
-  return deck.sort(() => Math.random() - 0.5);
+  // use seeded shuffle for fairness where possible
+  return RNGManager.shuffleArray(deck, seed);
 };
 
 export const GameplayPage = () => {
@@ -102,22 +105,8 @@ export const GameplayPage = () => {
       if (t <= 0) clearInterval(tv);
     }, 1000);
 
-    // Schedule AI responses
-    hands.forEach((h, idx) => {
-      if (idx === 0) return; // skip local player
-      const has = h.find(c => c.v === phrase);
-      if (has) {
-        const delay = 600 + Math.random() * 1800; // 0.6-2.4s
-        setTimeout(() => aiPlay(idx, has.id), delay);
-      } else {
-        // sometimes fake miss actions
-        if (Math.random() < 0.15) {
-          const randomCard = h[Math.floor(Math.random() * h.length)];
-          const delay = 800 + Math.random() * 1800;
-          setTimeout(() => aiPlay(idx, randomCard.id, true), delay);
-        }
-      }
-    });
+    // Schedule AI responses via AIManager
+    AIManager.handleAnnounce({ hands, hostPhrase: phrase, aiPlayCallback: aiPlay });
 
     // Auto-mark for local player if enabled
     if (autoMark && hands[0]) {
