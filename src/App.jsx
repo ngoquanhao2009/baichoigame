@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { Background } from './components/Background';
 import { TopBar } from './components/TopBar';
 import { MenuSection } from './components/MenuSection';
@@ -15,7 +15,22 @@ import ResultPage from './pages/ResultPage';
 import './App.css';
 
 function MainMenu() {
+  const navigate = useNavigate();
   const [showWelcome, setShowWelcome] = useState(true);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const room = params.get('room');
+      const auto = params.get('autoStart');
+      if (room) {
+        // navigate to room with autoStart preserved
+        navigate(`/game/room/${room}${auto ? '?autoStart=1' : ''}`);
+      }
+    } catch (e) {}
+    // run only on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const playStartSound = async () => {
