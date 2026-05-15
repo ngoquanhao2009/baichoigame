@@ -25,6 +25,8 @@ const PHRASES = [
 
 import RNGManager from '../managers/RNGManager';
 import AIManager from '../managers/AIManager';
+import GameManager from '../managers/GameManager';
+import { on, off } from '../utils/EventBus';
 
 const makeDeck = (seed = null) => {
   const deck = [];
@@ -75,18 +77,61 @@ export const GameplayPage = () => {
   }, [hands]);
 
   useEffect(() => {
+    // initialize match via GameManager
+    const match = GameManager.createMatch({ players: 4, handSize: 5 });
+    setHands(match.hands || []);
+
+    // subscribe to events
+    const unAnn = on('announce', ({ phrase }) => {
+      setHostPhrase(phrase);
+      setTimer(4);
+      let t = 4;
+      const tv = setInterval(() => {
+        t -= 1;
+        setTimer(t > 0 ? t : 0);
+        if (t <= 0) clearInterval(tv);
+      }, 1000);
+    });
+
+    const unPlayed = on('hand:played', ({ hands: newHands }) => {
+      setHands(newHands);
+    });
+
+    const unResult = on('play:result', ({ playerIdx, success }) => {
+      if (playerIdx === 0) {
+        if (success) {
+          if (typeof addCoins === 'function') addCoins(200);
+          if (typeof addXp === 'function') addXp(30);
+          pushHistory({ type: 'win', coins: 200, time: Date.now() });
+          setCombo(c => c + 1);
+          playSuccessSound();
+        } else {
+          setCombo(0);
+        }
+      }
+    });
+
+    const unWin = on('match:win', ({ playerIdx }) => {
+      setWinner({ idx: playerIdx, name: playerIdx === 0 ? state.player.name : `AI ${playerIdx}` });
+    });
+
+    // start announce loop
     startHostLoop();
-    return () => stopHostLoop();
+
+    return () => {
+      stopHostLoop();
+      unAnn(); unPlayed(); unResult(); unWin();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hands]);
+  }, [id]);
 
   const startHostLoop = () => {
     stopHostLoop();
     intervalRef.current = setInterval(() => {
-      announcePhrase();
+      GameManager.announceRandom();
     }, 4500);
     // trigger first immediately
-    setTimeout(announcePhrase, 600);
+    setTimeout(() => GameManager.announceRandom(), 600);
   };
 
   const stopHostLoop = () => {
@@ -95,24 +140,7 @@ export const GameplayPage = () => {
   };
 
   const announcePhrase = () => {
-    const phrase = PHRASES[Math.floor(Math.random() * PHRASES.length)];
-    setHostPhrase(phrase);
-    setTimer(4);
-    let t = 4;
-    const tv = setInterval(() => {
-      t -= 1;
-      setTimer(t > 0 ? t : 0);
-      if (t <= 0) clearInterval(tv);
-    }, 1000);
-
-    // Schedule AI responses via AIManager
-    AIManager.handleAnnounce({ hands, hostPhrase: phrase, aiPlayCallback: aiPlay });
-
-    // Auto-mark for local player if enabled
-    if (autoMark && hands[0]) {
-      const myMatch = hands[0].find(c => c.v === phrase);
-      if (myMatch) setTimeout(() => playCard(myMatch.id), 300 + Math.random()*300);
-    }
+    // kept for backward compatibility (unused)
   };
 
   const aiPlay = (playerIdx, cardId, forcedMiss = false) => {
@@ -145,27 +173,8 @@ export const GameplayPage = () => {
 
   const playCard = (cardId) => {
     playClickSound();
-    setHands(prev => {
-      const copy = prev.map(arr => [...arr]);
-      const card = copy[0].find(c => c.id === cardId);
-      if (!card) return prev;
-      copy[0] = copy[0].filter(c => c.id !== cardId);
-      const success = card.v === hostPhrase;
-      if (success) {
-        if (typeof addCoins === 'function') addCoins(200);
-        if (typeof addXp === 'function') addXp(30);
-        pushHistory({ type: 'win', coins: 200, time: Date.now() });
-        setCombo(c => c + 1);
-        playSuccessSound();
-      } else {
-        setCombo(0);
-      }
-      if (copy[0].length === 0) {
-        setWinner({ idx: 0, name: state.player.name });
-        stopHostLoop();
-      }
-      return copy;
-    });
+    // delegate to GameManager
+    GameManager.playCard(0, cardId);
   };
 
   useEffect(() => {
