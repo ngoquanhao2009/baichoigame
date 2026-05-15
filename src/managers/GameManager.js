@@ -1,6 +1,8 @@
 import RNGManager from './RNGManager';
 import AIManager from './AIManager';
 import { emit } from '../utils/EventBus';
+import AnimationManager from './AnimationManager';
+import AudioManager from './AudioManager';
 
 const state = {
   seed: null,
@@ -55,6 +57,9 @@ export function createMatch({ players = 4, handSize = 9, seed = null } = {}) {
   state.hands = handsLocal;
   state.announced = new Set();
   emit('match:dealt', { hands: state.hands, seed: state.seed });
+  // play deal animation and optionally preload audio
+  AnimationManager.playDealSequence({ duration: 1200 });
+  AudioManager.playClick();
   return state;
 }
 
@@ -66,6 +71,8 @@ export function announceRandom() {
   state.announced.add(pick.v);
   state.currentPhrase = pick.v;
   emit('announce', { phrase: pick.v });
+  // host cinematic sound
+  AudioManager.playHostVoice(`/audio/host_${String(pick.v).toLowerCase().replace(/\s+/g,'_')}.mp3`);
   // schedule AI via AIManager
   AIManager.handleAnnounce({ hands: state.hands, hostPhrase: pick.v, aiPlayCallback: playCard });
   return pick.v;
@@ -84,6 +91,9 @@ export function playCard(playerIdx, cardId) {
   // check win
   if (state.hands[playerIdx].length === 0) {
     emit('match:win', { playerIdx });
+    // winner cinematic/audio
+    AnimationManager.playWinnerSequence({ playerIdx });
+    AudioManager.playSuccess();
   }
 }
 

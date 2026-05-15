@@ -27,6 +27,10 @@ import RNGManager from '../managers/RNGManager';
 import AIManager from '../managers/AIManager';
 import GameManager from '../managers/GameManager';
 import { on, off } from '../utils/EventBus';
+import AnimationManager from '../managers/AnimationManager';
+import AudioManager from '../managers/AudioManager';
+import cards from '../data/cards.json';
+import preload from '../utils/preloadAssets';
 
 const makeDeck = (seed = null) => {
   const deck = [];
@@ -77,6 +81,16 @@ export const GameplayPage = () => {
   }, [hands]);
 
   useEffect(() => {
+    // preload card assets for smooth UX
+    (async () => {
+      try {
+        const imgs = (cards||[]).map(c => c.image).filter(Boolean);
+        const aud = (cards||[]).map(c => c.voice).filter(Boolean);
+        await preload.preloadImages(imgs);
+        await preload.preloadAudio(aud);
+      } catch (e) {}
+    })();
+
     // initialize match via GameManager
     const match = GameManager.createMatch({ players: 4, handSize: 5 });
     setHands(match.hands || []);
@@ -91,6 +105,12 @@ export const GameplayPage = () => {
         setTimer(t > 0 ? t : 0);
         if (t <= 0) clearInterval(tv);
       }, 1000);
+      // play host voice if card mapping exists
+      try {
+        const key = String(phrase).toLowerCase().replace(/\s+/g,'_');
+        const c = (cards||[]).find(x => (x.id === key) || (x.name && x.name.toLowerCase() === phrase.toLowerCase()));
+        if (c && c.voice) AudioManager.playHostVoice(c.voice);
+      } catch (e) {}
     });
 
     const unPlayed = on('hand:played', ({ hands: newHands }) => {
@@ -115,12 +135,20 @@ export const GameplayPage = () => {
       setWinner({ idx: playerIdx, name: playerIdx === 0 ? state.player.name : `AI ${playerIdx}` });
     });
 
+    const unDealStart = on('animation:deal:start', () => setDealing(true));
+    const unDealEnd = on('animation:deal:end', () => setDealing(false));
+    const unWinnerStart = on('animation:winner:start', ({ playerIdx }) => {
+      // optional: show confetti early
+      setShowResult(true);
+    });
+
     // start announce loop
     startHostLoop();
 
     return () => {
       stopHostLoop();
       unAnn(); unPlayed(); unResult(); unWin();
+      unDealStart(); unDealEnd(); unWinnerStart();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
