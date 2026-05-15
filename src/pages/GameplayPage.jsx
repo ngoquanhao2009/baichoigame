@@ -72,6 +72,7 @@ export const GameplayPage = () => {
 
   // dealing state for animation
   const [dealing, setDealing] = useState(false);
+  const [showHostCine, setShowHostCine] = useState(false);
   useEffect(() => {
     if (hands && hands.length) {
       setDealing(true);
@@ -98,6 +99,9 @@ export const GameplayPage = () => {
     // subscribe to events
     const unAnn = on('announce', ({ phrase }) => {
       setHostPhrase(phrase);
+      setShowHostCine(true);
+      // cinematic display short then hide
+      setTimeout(() => setShowHostCine(false), 900);
       setTimer(4);
       let t = 4;
       const tv = setInterval(() => {
@@ -237,6 +241,21 @@ export const GameplayPage = () => {
             <div className="my-4">
               <Host phrase={hostPhrase} />
             </div>
+
+            {/* Host cinematic: big card pop when host announces */}
+            {showHostCine && (
+              <div className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
+                <motion.div
+                  initial={{ scale: 0.6, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="bg-gradient-to-br from-yellow-400 to-orange-500 text-gray-900 rounded-3xl px-8 py-6 shadow-2xl"
+                >
+                  <div className="text-4xl font-extrabold">{hostPhrase}</div>
+                </motion.div>
+              </div>
+            )}
 
             <div className="w-full md:max-w-4xl mx-auto">
               <div className="flex items-center justify-between mb-6">
