@@ -261,12 +261,13 @@ export const GameplayPage = () => {
               <div className="flex items-center justify-between mb-6">
                 <PlayerSeat player={{ name: 'AI 1', coin: 1200, ready: true }} />
                 <div className="flex-1 text-center"> 
-                  <div className="inline-block px-6 py-3 bg-gradient-to-r from-yellow-600 to-orange-500 rounded-xl shadow-lg">Bàn chơi</div>
+                      <div className="inline-block px-6 py-3 bg-gradient-to-r from-yellow-600 to-orange-500 rounded-xl shadow-lg">Bàn chơi</div>
                 </div>
                 <PlayerSeat player={{ name: 'AI 2', coin: 980, ready: true }} />
               </div>
 
-              <div className="bg-gradient-to-br from-amber-900/10 to-transparent rounded-2xl p-6">
+                  <div className="relative bg-[url('/cards/table_texture.png')] bg-cover bg-center rounded-2xl p-6" style={{backgroundColor:'rgba(36,20,6,0.6)'}}>
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-900/10 to-transparent rounded-2xl pointer-events-none" />
                 <div className="flex items-center justify-between mb-3">
                   <div className="text-sm text-white/80">Host đang hô: <strong className="text-white">{hostPhrase}</strong></div>
                   <div className="flex items-center gap-2">
@@ -306,7 +307,16 @@ export const GameplayPage = () => {
         )}
 
         {showResult && winner && (
-          <ResultModal winner={winner} coins={winner.idx===0?800:200} xp={winner.idx===0?200:40} />
+          <>
+            <ResultModal winner={winner} coins={winner.idx===0?800:200} xp={winner.idx===0?200:40} />
+            <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-6xl font-extrabold text-yellow-300 drop-shadow-xl">🏆</div>
+                <div className="text-2xl font-bold text-white mt-4">{winner.name} Đã chiến thắng!</div>
+              </div>
+              <Confetti />
+            </div>
+          </>
         )}
       </div>
     </div>
