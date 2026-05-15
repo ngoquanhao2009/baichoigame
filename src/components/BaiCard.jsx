@@ -10,7 +10,8 @@ export const BaiCard = ({ card, onClick, disabled, dealDelay = 0 }) => {
       whileHover={{ y: -8, scale: 1.02 }}
       whileTap={{ scale: 0.96 }}
       onClick={() => !disabled && onClick && onClick(card.id ? card.id : card)}
-      className={`relative min-w-[92px] w-24 bg-gradient-to-br from-white/6 to-white/3 border border-white/12 rounded-2xl px-3 py-4 text-center transition-shadow overflow-hidden ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-2xl'}`}
+      onTouchStart={() => { if (navigator.vibrate) navigator.vibrate(8); }}
+      className={`relative min-w-[92px] w-24 bg-gradient-to-br from-white/6 to-white/3 border border-white/12 rounded-2xl px-3 py-4 text-center transition-shadow transform-gpu will-change-transform overflow-hidden ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-2xl'}`}
     >
       <div className="absolute inset-0 pointer-events-none">
         <div className="card-shine" />
