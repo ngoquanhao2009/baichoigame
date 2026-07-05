@@ -3,6 +3,7 @@ import AIManager from './AIManager';
 import { emit } from '../utils/EventBus';
 import AnimationManager from './AnimationManager';
 import AudioManager from './AudioManager';
+import cards from '../data/cards.json';
 
 const state = {
   seed: null,
@@ -12,31 +13,33 @@ const state = {
   players: 4,
   handSize: 9,
   currentPhrase: null,
+  currentChant: null,
+  currentCard: null,
 };
+
+// Build phrase list from cards.json (single source of truth)
+const PHRASES = (cards || []).map(c => c.name).filter(Boolean);
+
+function findCardByName(name) {
+  if (!name) return null;
+  return (cards || []).find(c => c.name === name) || null;
+}
+
+function pickChant(card) {
+  if (!card || !Array.isArray(card.chants) || card.chants.length === 0) return null;
+  return card.chants[Math.floor(Math.random() * card.chants.length)];
+}
 
 export function createMatch({ players = 4, handSize = 9, seed = null } = {}) {
   state.seed = seed || RNGManager.cryptoSeed();
   state.players = players;
   state.handSize = handSize;
-  // build base deck from phrases or cards - for now use phrases from GameplayPage
-  const PHRASES = [
-    'Nhứt Nọc','Ông Ầm','Tám Bích','Ba Gà','Tứ Cẳng','Năm Lẻ','Sáu Đôi','Bảy Vui'
-  ];
   const deck = [];
   PHRASES.forEach((p) => {
     for (let i = 0; i < 6; i++) deck.push({ id: `${p}-${i}-${Math.random().toString(36).slice(2,6)}`, v: p });
   });
-  // smart distribution: avoid extreme hand strength by reshuffling a few times
-  const weights = {
-    'Nhứt Nọc': 1,
-    'Ông Ầm': 1,
-    'Tám Bích': 1,
-    'Ba Gà': 1,
-    'Tứ Cẳng': 1,
-    'Năm Lẻ': 1,
-    'Sáu Đôi': 1,
-    'Bảy Vui': 1,
-  };
+  const weights = {};
+  PHRASES.forEach((p) => { weights[p] = 1; });
 
   let attempts = 0;
   let handsLocal = [];
@@ -50,32 +53,43 @@ export function createMatch({ players = 4, handSize = 9, seed = null } = {}) {
     const max = Math.max(...strengths);
     const min = Math.min(...strengths);
     attempts++;
-    // if difference too large, reshuffle (threshold 6)
     if ((max - min) <= 6 || attempts >= 8) break;
   } while (attempts < 10);
 
   state.hands = handsLocal;
   state.announced = new Set();
+  state.currentPhrase = null;
+  state.currentChant = null;
+  state.currentCard = null;
   emit('match:dealt', { hands: state.hands, seed: state.seed });
-  // play deal animation and optionally preload audio
   AnimationManager.playDealSequence({ duration: 1200 });
   AudioManager.playClick();
   return state;
 }
 
 export function announceRandom() {
-  // pick phrase not announced yet from deck values
   const remaining = state.deck.filter(c => !state.announced.has(c.v));
   if (remaining.length === 0) return null;
   const pick = remaining[Math.floor(Math.random() * remaining.length)];
   state.announced.add(pick.v);
   state.currentPhrase = pick.v;
-  emit('announce', { phrase: pick.v });
-  // host cinematic sound
-  AudioManager.playHostVoice(`/audio/host_${String(pick.v).toLowerCase().replace(/\s+/g,'_')}.mp3`);
-  // schedule AI via AIManager
+
+  const card = findCardByName(pick.v);
+  const chant = pickChant(card);
+  state.currentChant = chant;
+  state.currentCard = card;
+
+  emit('announce', { phrase: pick.v, chant, card });
+
+  if (card && card.voice) {
+    AudioManager.playHostVoice(card.voice);
+  } else {
+    const fallbackKey = `/audio/host_${String(pick.v).toLowerCase().replace(/\s+/g,'_')}.mp3`;
+    AudioManager.playHostVoice(fallbackKey);
+  }
+
   AIManager.handleAnnounce({ hands: state.hands, hostPhrase: pick.v, aiPlayCallback: playCard });
-  return pick.v;
+  return { phrase: pick.v, chant, card };
 }
 
 export function playCard(playerIdx, cardId) {
@@ -83,15 +97,12 @@ export function playCard(playerIdx, cardId) {
   if (!hand) return;
   const card = hand.find(c => c.id === cardId);
   if (!card) return;
-  // remove
   state.hands[playerIdx] = hand.filter(c => c.id !== cardId);
   const success = card.v === state.currentPhrase;
   emit('hand:played', { playerIdx, card, hands: state.hands, success });
-  emit('play:result', { playerIdx, card, success });
-  // check win
+  emit('play:result', { playerIdx, card, success, hostPhrase: state.currentPhrase, chant: state.currentChant });
   if (state.hands[playerIdx].length === 0) {
     emit('match:win', { playerIdx });
-    // winner cinematic/audio
     AnimationManager.playWinnerSequence({ playerIdx });
     AudioManager.playSuccess();
   }

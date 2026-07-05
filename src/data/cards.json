@@ -1,14 +1,134 @@
 [
-  {"id":"ong_am","name":"Ông Ầm","rarity":"common","image":"/cards/ong_am.webp","voice":"/audio/ong_am.mp3"},
-  {"id":"tam_bich","name":"Tám Bích","rarity":"common","image":"/cards/tam_bich.webp","voice":"/audio/tam_bich.mp3"},
-  {"id":"ba_ga","name":"Ba Gà","rarity":"common","image":"/cards/ba_ga.webp","voice":"/audio/ba_ga.mp3"},
-  {"id":"nhut_noc","name":"Nhứt Nọc","rarity":"common","image":"/cards/nhut_noc.webp","voice":"/audio/nhut_noc.mp3"},
-  {"id":"tu_cang","name":"Tứ Cẳng","rarity":"common","image":"/cards/tu_cang.webp","voice":"/audio/tu_cang.mp3"},
-  {"id":"nam_le","name":"Năm Lẻ","rarity":"common","image":"/cards/nam_le.webp","voice":"/audio/nam_le.mp3"},
-  {"id":"sau_doi","name":"Sáu Đôi","rarity":"common","image":"/cards/sau_doi.webp","voice":"/audio/sau_doi.mp3"},
-  {"id":"bay_vui","name":"Bảy Vui","rarity":"common","image":"/cards/bay_vui.webp","voice":"/audio/bay_vui.mp3"},
-  {"id":"bach_hue","name":"Bạch Huê","rarity":"uncommon","image":"/cards/bach_hue.webp","voice":"/audio/bach_hue.mp3"},
-  {"id":"sau_hot","name":"Sáu Hột","rarity":"uncommon","image":"/cards/sau_hot.webp","voice":"/audio/sau_hot.mp3"},
-  {"id":"chin_cu","name":"Chín Cu","rarity":"uncommon","image":"/cards/chin_cu.webp","voice":"/audio/chin_cu.mp3"},
-  {"id":"bi_do","name":"Bí Đỏ","rarity":"rare","image":"/cards/bi_do.webp","voice":"/audio/bi_do.mp3"}
+  {
+    "id": "ba_ga",
+    "name": "Ba Gà",
+    "rarity": "common",
+    "image": "/cards/ba_ga.webp",
+    "voice": "/audio/ba_ga.mp3",
+    "chants": [
+      "Gà gáy le te, trời vừa hửng sáng,\nAi còn mê ngủ, lỡ mất mùa xuân.\nMời bà con đoán thử quân chi?",
+      "Con gà bới đất tìm mồi,\nAi mà nhanh trí thì cười trước sau."
+    ]
+  },
+  {
+    "id": "bach_hue",
+    "name": "Bạch Huệ",
+    "rarity": "uncommon",
+    "image": "/cards/bach_hue.webp",
+    "voice": "/audio/bach_hue.mp3",
+    "chants": [
+      "Hoa huệ trắng nở đầu sân,\nHương thơm ngan ngát giữ chân bao người.\nQuân chi mà đẹp rứa hè?",
+      "Một cành bạch huệ nghiêng mình,\nNgười quân tử giữ nghĩa tình trước sau."
+    ]
+  },
+  {
+    "id": "bay_vui",
+    "name": "Bảy Vui",
+    "rarity": "common",
+    "image": "/cards/bay_vui.webp",
+    "voice": "/audio/bay_vui.mp3",
+    "chants": [
+      "Hội làng rộn rã tiếng cười,\nNgười vui ta cũng vui lây cả chiều.",
+      "Tiếng trống vang vang gọi bạn,\nCó quân nào mang chữ vui đây?"
+    ]
+  },
+  {
+    "id": "bi_do",
+    "name": "Bí Đỏ",
+    "rarity": "rare",
+    "image": "/cards/bi_do.webp",
+    "voice": "/audio/bi_do.mp3",
+    "chants": [
+      "Bí đỏ leo kín giàn cao,\nĐơm hoa kết trái ngọt ngào quê hương.",
+      "Bầu thương lấy bí một giàn,\nTình làng nghĩa xóm chứa chan nghĩa tình."
+    ]
+  },
+  {
+    "id": "chin_cu",
+    "name": "Chín Cú",
+    "rarity": "uncommon",
+    "image": "/cards/chin_cu.webp",
+    "voice": "/audio/chin_cu.mp3",
+    "chants": [
+      "Đêm khuya cú gọi bên rừng,\nNgười khôn nghe tiếng đoán chừng quân chi.",
+      "Một tiếng cú vọng canh ba,\nAi tinh ý sẽ nhận ra quân bài."
+    ]
+  },
+  {
+    "id": "nam_le",
+    "name": "Năm Lê",
+    "rarity": "common",
+    "image": "/cards/nam_le.webp",
+    "voice": "/audio/nam_le.mp3",
+    "chants": [
+      "Trái lê chín mọng đầu cành,\nNgọt thơm như nghĩa bạn lành hôm nay.",
+      "Lê vàng lắc lư trong gió,\nQuân nào đang đợi bà con gọi tên?"
+    ]
+  },
+  {
+    "id": "nhut_noc",
+    "name": "Nhứt Nọc",
+    "rarity": "common",
+    "image": "/cards/nhut_noc.webp",
+    "voice": "/audio/nhut_noc.mp3",
+    "chants": [
+      "Một cây đứng giữa đồng xa,\nDẫu mưa dẫu nắng vẫn là hiên ngang.",
+      "Đầu xuôi thì đuôi lọt,\nMột quân mở lối cuộc chơi bắt đầu."
+    ]
+  },
+  {
+    "id": "ong_am",
+    "name": "Ông Ầm",
+    "rarity": "common",
+    "image": "/cards/ong_am.webp",
+    "voice": "/audio/ong_am.mp3",
+    "chants": [
+      "Ông đi tiếng trống rền vang,\nCả làng náo nhiệt rộn ràng hội xuân.",
+      "Ầm vang một tiếng giữa sân,\nQuân nào oai vệ bà con đoán coi."
+    ]
+  },
+  {
+    "id": "sau_doi",
+    "name": "Sáu Đọi",
+    "rarity": "common",
+    "image": "/cards/sau_doi.webp",
+    "voice": "/audio/sau_doi.mp3",
+    "chants": [
+      "Đọi cơm chan chứa nghĩa tình,\nNo lòng người ở, thắm tình quê hương.",
+      "Đọi đầy cơm trắng thơm ngon,\nAi đoán đúng thưởng một tràng pháo tay."
+    ]
+  },
+  {
+    "id": "sau_hot",
+    "name": "Sáu Hột",
+    "rarity": "uncommon",
+    "image": "/cards/sau_hot.webp",
+    "voice": "/audio/sau_hot.mp3",
+    "chants": [
+      "Hột lúa vàng óng ngoài sân,\nMột năm mưa nắng góp phần ấm no.",
+      "Gieo hột xuống đất quê nhà,\nMai sau gặt hái đậm đà yêu thương."
+    ]
+  },
+  {
+    "id": "tam_bich",
+    "name": "Tam Bích",
+    "rarity": "common",
+    "image": "/cards/tam_bich.webp",
+    "voice": "/audio/tam_bich.mp3",
+    "chants": [
+      "Ba nhành trúc đứng hiên ngang,\nMặc cho gió bão vẫn mang nghĩa tình.",
+      "Tre già măng mọc nối nhau,\nQuân nào bền chí ai mau đoán nào."
+    ]
+  },
+  {
+    "id": "tu_cang",
+    "name": "Tứ Cẳng",
+    "rarity": "common",
+    "image": "/cards/tu_cang.webp",
+    "voice": "/audio/tu_cang.mp3",
+    "chants": [
+      "Bốn chân chạy khắp đồng xa,\nChở bao hy vọng về nhà bình yên.",
+      "Cẳng khỏe vượt suối băng đồng,\nAi tinh mắt sẽ biết ngay quân gì."
+    ]
+  }
 ]

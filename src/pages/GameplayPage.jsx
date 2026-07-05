@@ -12,17 +12,6 @@ import ResultModal from '../components/ResultModal';
 import Confetti from '../components/Confetti';
 import CoinBurst from '../components/CoinBurst';
 
-const PHRASES = [
-  'Nhứt Nọc',
-  'Ông Ầm',
-  'Tám Bích',
-  'Ba Gà',
-  'Tứ Cẳng',
-  'Năm Lẻ',
-  'Sáu Đôi',
-  'Bảy Vui',
-];
-
 import RNGManager from '../managers/RNGManager';
 import AIManager from '../managers/AIManager';
 import GameManager from '../managers/GameManager';
@@ -32,12 +21,13 @@ import AudioManager from '../managers/AudioManager';
 import cards from '../data/cards.json';
 import preload from '../utils/preloadAssets';
 
+const PHRASES = (cards || []).map(c => c.name).filter(Boolean);
+
 const makeDeck = (seed = null) => {
   const deck = [];
   PHRASES.forEach((p) => {
     for (let i = 0; i < 6; i++) deck.push({ id: `${p}-${i}-${Math.random().toString(36).slice(2,6)}`, v: p });
   });
-  // use seeded shuffle for fairness where possible
   return RNGManager.shuffleArray(deck, seed);
 };
 
@@ -45,8 +35,10 @@ export const GameplayPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { state, updatePlayer, pushHistory, updateRoom, addCoins, addXp, setStreak } = useGameStore();
-  const [hands, setHands] = useState([]); // index 0 = local player, others ai
+  const [hands, setHands] = useState([]);
   const [hostPhrase, setHostPhrase] = useState('');
+  const [hostChant, setHostChant] = useState(null);
+  const [hostCardName, setHostCardName] = useState('');
   const [round, setRound] = useState(1);
   const [timer, setTimer] = useState(null);
   const intervalRef = useRef(null);
@@ -57,7 +49,6 @@ export const GameplayPage = () => {
   const [autoMark, setAutoMark] = useState(true);
 
   useEffect(() => {
-    // deal
     const deck = makeDeck();
     const players = 4;
     const dealCount = 5;
@@ -70,9 +61,7 @@ export const GameplayPage = () => {
     setWinner(null);
   }, [id]);
 
-  // dealing state for animation
   const [dealing, setDealing] = useState(false);
-  const [showHostCine, setShowHostCine] = useState(false);
   useEffect(() => {
     if (hands && hands.length) {
       setDealing(true);
@@ -82,7 +71,6 @@ export const GameplayPage = () => {
   }, [hands]);
 
   useEffect(() => {
-    // preload card assets for smooth UX
     (async () => {
       try {
         const imgs = (cards||[]).map(c => c.image).filter(Boolean);
@@ -92,16 +80,13 @@ export const GameplayPage = () => {
       } catch (e) {}
     })();
 
-    // initialize match via GameManager
     const match = GameManager.createMatch({ players: 4, handSize: 5 });
     setHands(match.hands || []);
 
-    // subscribe to events
-    const unAnn = on('announce', ({ phrase }) => {
+    const unAnn = on('announce', ({ phrase, chant, card }) => {
       setHostPhrase(phrase);
-      setShowHostCine(true);
-      // cinematic display short then hide
-      setTimeout(() => setShowHostCine(false), 900);
+      setHostChant(chant || null);
+      setHostCardName((card && card.name) || phrase);
       setTimer(4);
       let t = 4;
       const tv = setInterval(() => {
@@ -109,7 +94,6 @@ export const GameplayPage = () => {
         setTimer(t > 0 ? t : 0);
         if (t <= 0) clearInterval(tv);
       }, 1000);
-      // play host voice if card mapping exists
       try {
         const key = String(phrase).toLowerCase().replace(/\s+/g,'_');
         const c = (cards||[]).find(x => (x.id === key) || (x.name && x.name.toLowerCase() === phrase.toLowerCase()));
@@ -142,11 +126,9 @@ export const GameplayPage = () => {
     const unDealStart = on('animation:deal:start', () => setDealing(true));
     const unDealEnd = on('animation:deal:end', () => setDealing(false));
     const unWinnerStart = on('animation:winner:start', ({ playerIdx }) => {
-      // optional: show confetti early
       setShowResult(true);
     });
 
-    // start announce loop
     startHostLoop();
 
     return () => {
@@ -161,8 +143,7 @@ export const GameplayPage = () => {
     stopHostLoop();
     intervalRef.current = setInterval(() => {
       GameManager.announceRandom();
-    }, 4500);
-    // trigger first immediately
+    }, 6500);
     setTimeout(() => GameManager.announceRandom(), 600);
   };
 
@@ -171,20 +152,13 @@ export const GameplayPage = () => {
     intervalRef.current = null;
   };
 
-  const announcePhrase = () => {
-    // kept for backward compatibility (unused)
-  };
-
   const aiPlay = (playerIdx, cardId, forcedMiss = false) => {
     setHands(prev => {
       const copy = prev.map(arr => [...arr]);
       const card = copy[playerIdx].find(c => c.id === cardId);
       if (!card) return prev;
-      // if forcedMiss, play a wrong card (no effect)
       copy[playerIdx] = copy[playerIdx].filter(c => c.id !== cardId);
-      // check win
       if (!forcedMiss && card.v === hostPhrase) {
-        // success
         if (playerIdx === 0) {
           if (typeof addCoins === 'function') addCoins(150);
           if (typeof addXp === 'function') addXp(20);
@@ -194,7 +168,6 @@ export const GameplayPage = () => {
       } else {
         if (playerIdx === 0) setCombo(0);
       }
-      // detect winner
       if (copy[playerIdx].length === 0) {
         setWinner({ idx: playerIdx, name: playerIdx === 0 ? state.player.name : `AI ${playerIdx}` });
         stopHostLoop();
@@ -205,20 +178,16 @@ export const GameplayPage = () => {
 
   const playCard = (cardId) => {
     playClickSound();
-    // delegate to GameManager
     GameManager.playCard(0, cardId);
   };
 
   useEffect(() => {
     if (!winner) return;
-    // award winner coin bonus and navigate to result after animation
     if (winner.idx === 0) {
-      // award player
       if (typeof addCoins === 'function') addCoins(500);
       if (typeof addXp === 'function') addXp(120);
       pushHistory({ type: 'round-win', coins: 500, time: Date.now() });
     }
-    // show result modal
     setShowResult(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [winner]);
@@ -237,39 +206,24 @@ export const GameplayPage = () => {
 
         <div className="flex items-start gap-4">
           <div className="flex-1">
-            <MatchHUD hostName={"Ông Hô"} phrase={hostPhrase} round={round} timer={timer} />
+            <MatchHUD hostName={"Anh Hiệu"} phrase={hostPhrase} round={round} timer={timer} />
             <div className="my-4">
-              <Host phrase={hostPhrase} />
+              <Host phrase={hostPhrase} chant={hostChant} cardName={hostCardName} />
             </div>
-
-            {/* Host cinematic: big card pop when host announces */}
-            {showHostCine && (
-              <div className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
-                <motion.div
-                  initial={{ scale: 0.6, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className="bg-gradient-to-br from-yellow-400 to-orange-500 text-gray-900 rounded-3xl px-8 py-6 shadow-2xl"
-                >
-                  <div className="text-4xl font-extrabold">{hostPhrase}</div>
-                </motion.div>
-              </div>
-            )}
 
             <div className="w-full md:max-w-4xl mx-auto">
               <div className="flex items-center justify-between mb-6">
                 <PlayerSeat player={{ name: 'AI 1', coin: 1200, ready: true }} />
-                <div className="flex-1 text-center"> 
-                      <div className="inline-block px-6 py-3 bg-gradient-to-r from-yellow-600 to-orange-500 rounded-xl shadow-lg">Bàn chơi</div>
+                <div className="flex-1 text-center">
+                  <div className="inline-block px-6 py-3 bg-gradient-to-r from-yellow-600 to-orange-500 rounded-xl shadow-lg">Bàn chơi</div>
                 </div>
                 <PlayerSeat player={{ name: 'AI 2', coin: 980, ready: true }} />
               </div>
 
-                  <div className="relative bg-[url('/cards/table_texture.png')] bg-cover bg-center rounded-2xl p-6" style={{backgroundColor:'rgba(36,20,6,0.6)'}}>
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-900/10 to-transparent rounded-2xl pointer-events-none" />
+              <div className="relative bg-[url('/cards/table_texture.png')] bg-cover bg-center rounded-2xl p-6" style={{backgroundColor:'rgba(36,20,6,0.6)'}}>
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-900/10 to-transparent rounded-2xl pointer-events-none" />
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-sm text-white/80">Host đang hô: <strong className="text-white">{hostPhrase}</strong></div>
+                  <div className="text-sm text-white/80">Anh Hiệu đang hô: <strong className="text-white">{hostPhrase}</strong></div>
                   <div className="flex items-center gap-2">
                     <div className="text-sm text-white/80">Auto</div>
                     <button onClick={() => setAutoMark(a => !a)} className={`px-3 py-1 rounded ${autoMark ? 'bg-green-500' : 'bg-gray-600'}`}>{autoMark ? 'ON' : 'OFF'}</button>
